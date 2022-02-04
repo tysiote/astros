@@ -1,0 +1,119 @@
+$sidePadding: 40px;
+$sidePaddingNarrow: 20px;
+
+
+.section-wrapper {
+  width: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+.section {
+  position: relative;
+  &.full {
+    min-height: 100vh;
+  }
+
+  .section-group {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+
+    .section {
+      width: 100%;
+    }
+  }
+
+  .section-viewer {
+    height: 1px;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .section-content {
+    z-index: 1;
+    .section-header, .section-description, .section-widget {
+      display: flex;
+      justify-content: left;
+      padding-left: $sidePadding;
+      padding-right: $sidePadding;
+
+      &.right {
+        justify-content: right;
+      }
+
+      &.center {
+        justify-content: center;
+      }
+    }
+    padding-bottom: 30px;
+  }
+
+  .background {
+    z-index: 2;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+  }
+}
+
+@media (max-width: 800px) {
+
+  .section-dummy {
+    display: none;
+  }
+
+  .section {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+
+
+    .section-content {
+
+      padding-left: $sidePaddingNarrow !important;
+      padding-right: $sidePaddingNarrow !important;
+
+      .section-widget, .article {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+    }
+
+    .section-header, .section-description, .section-widget, .article {
+      width: 100% !important;
+      max-width: 100% !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+      &.right, &.center {
+        justify-content: left !important;
+      }
+
+      .section-description-content {
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+    }
+  }
+}
+
+@media (max-width: 800px) {
+  .section {
+    .section-group {
+      display: block;
+    }
+  }
+}

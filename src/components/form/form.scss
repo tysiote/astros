@@ -1,0 +1,50 @@
+@import "src/pages/main";
+
+.form {
+  width: 100%;
+
+  .form-item {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+
+    .form-group, .form-group-button {
+      width: 100%;
+      max-width: 500px;
+      display: flex;
+      flex-direction: column;
+
+      label {
+        margin-bottom: 5px;
+      }
+
+      input, textarea {
+        margin-bottom: 20px;
+        min-width: 300px;
+        border-radius: 5px;
+        padding: 5px 10px;
+        outline: 0;
+        box-sizing: border-box;
+        height: 100%;
+        border: 2px solid $black;
+
+        &:active, &:focus-within, &:focus {
+          border-color: $red;
+          box-shadow: 0 0 10px #719ECE;
+        }
+      }
+
+      button {
+        border-radius: 5px;
+        height: 40px;
+        width: 200px;
+        margin-bottom: 30px;
+        font-size: 20px;
+      }
+    }
+
+    .form-group-button {
+      align-items: flex-end;
+    }
+  }
+}

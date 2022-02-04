@@ -1,0 +1,84 @@
+@import "src/pages/main";
+
+.icon-picker {
+  .icon-picker-status {
+    width: 100%;
+    margin-bottom: 5px;
+
+    label {
+      margin-right: 10px;
+    }
+
+    .icon-picker-icon {
+      //max-width: 300px;
+    }
+  }
+
+  .modal {
+
+    .modal-content {
+      max-width: 1200px;
+      width: 1200px;
+      min-width: 600px;
+
+      .icons-container {
+        overflow-y: auto;
+        max-height: 600px;
+
+        .icon-picker-icon-list {
+          display: flex;
+          flex-wrap: wrap;
+
+          h2 {
+            margin-top: 20px;
+            width: 100%;
+          }
+
+
+          .icon-picker-icon {
+            margin: 5px 10px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+
+            &:hover {
+              cursor: pointer;
+              border: 2px solid $black;
+            }
+
+            &.selected {
+              cursor: pointer;
+              border: 2px solid $black;
+            }
+          }
+        }
+      }
+    }
+    .icon-picker-footer {
+      display: flex;
+      height: 100px;
+      align-items: center;
+      justify-content: space-between;
+
+      .icon-picker-icon-name {
+        display: flex;
+        align-items: center;
+        .selected-icon {
+          margin-left: 10px;
+        }
+      }
+
+
+      .icon-picker-controls {
+        display: flex;
+        .button {
+          margin-left: 10px;
+          min-width: 200px;
+        }
+      }
+    }
+  }
+}

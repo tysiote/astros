@@ -1,0 +1,36 @@
+@import "src/pages/main";
+
+.admin-section-active-widget {
+  .widget-article {
+    .admin-section-active-widget-heading-wrapper {
+      margin: 20px 0;
+    }
+
+    .admin-section-active-widget-content-wrapper {
+      margin: 20px 0;
+    }
+
+    .header-options {
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+
+  .widget-animation {
+    .admin-animation-widget-color-picker {
+      margin: 20px 0;
+    }
+  }
+
+  .widget-group {
+    .admin-section-group-widget-wrapped-widget {
+      border-top: 1px solid $white3;
+    }
+  }
+
+  .widget-logos {
+    .uploader-logo {
+      margin-top: 10px;
+    }
+  }
+}

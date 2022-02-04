@@ -1,0 +1,25 @@
+.seek-step-bar {
+  .seek-step-bar-info {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    align-items: center;
+    padding-left: 5px;
+
+    .label {
+      margin-right: 5px;
+    }
+
+    .value {
+      margin-right: 20px;
+    }
+  }
+
+  canvas {
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  margin: 20px 0;
+}

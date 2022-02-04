@@ -1,0 +1,51 @@
+@import 'src/pages/main';
+
+.numeric-tiles {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  .numeric-tile {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 150px;
+    height: 150px;
+    margin: 10px;
+    position: relative;
+
+    .numeric-tile-content {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+
+      .numeric-tile-title {
+        width: 100%;
+        font-size: 24px;
+        font-weight: bold;
+        justify-content: center;
+        display: flex;
+        margin-bottom: 10px;
+      }
+
+      .numeric-tile-description {
+        width: 100%;
+        font-size: 16px;
+        justify-content: center;
+        display: flex;
+        margin-bottom: 10px;
+      }
+    }
+
+    .numeric-tile-footer {
+      width: calc(100% - 20px);
+      height: 1px;
+      border-bottom: 1px solid $white2;
+      position: absolute;
+      bottom: 20px;
+      left: 10px;
+      right: 10px;
+    }
+  }
+}

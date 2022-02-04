@@ -1,0 +1,18 @@
+.switch-wrapper {
+  display: flex;
+  align-items: center;
+
+  .react-switch-handle {
+    height: 20px !important;
+    width: 20px !important;
+  }
+
+  .switch-label {
+    font-size: 16px;
+    margin-right: 5px;
+  }
+
+  &.with-label {
+    margin-bottom: 10px;
+  }
+}

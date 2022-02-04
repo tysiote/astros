@@ -1,0 +1,28 @@
+@import "src/pages/main";
+
+.uploader {
+  label {
+    font-size: 1rem;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+
+  .uploader-controls {
+    display: flex;
+    justify-content: space-between;
+
+    .uploader-btn-browse, .uploader-btn-upload {
+      min-width: 100px;
+    }
+  }
+
+  .uploader-file-label {
+    font-style: italic;
+    color: $black;
+    padding-left: 5px;
+  }
+
+  .uploader-input {
+    display: none;
+  }
+}

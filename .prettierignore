@@ -1,0 +1,8 @@
+/scripts/build.js
+/scripts/start.js
+/config
+/app/languages/*
+/doc
+/i18n
+/scripts
+*.md

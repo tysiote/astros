@@ -1,0 +1,69 @@
+@import "src/pages/main";
+
+.drawer {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 0;
+  background-color: $white4;
+  -webkit-transition: width 100ms linear;
+  -ms-transition: width 100ms linear;
+  transition: width 100ms linear;
+
+  &.visible {
+    width: 400px;
+    border-left: 1px solid $red;
+    box-shadow: 0 0 20px $red;
+  }
+
+  .drawer-inner {
+    position: relative;
+    margin: 0 10px;
+    width: 380px;
+    height: 100%;
+
+    .drawer-header {
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      font-weight: bold;
+      border-bottom: 1px solid $white3;
+      color: $red;
+    }
+
+    .drawer-content {
+      position: absolute;
+      top: 50px;
+      right: 0;
+      left: 0;
+      height: calc(100% - 100px);
+      overflow-y: auto;
+
+      .styler-part {
+        border-bottom: 1px solid $white3;
+        margin: 10px 0;
+        padding: 10px 0;
+      }
+    }
+
+    .drawer-footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 50px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+
+      .button {
+        margin-left: 10px;
+      }
+    }
+  }
+}

@@ -1,0 +1,48 @@
+@import "src/pages/main";
+
+.form-group {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+  .form-group-label {
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .form-group-input-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+
+    .form-group-input {
+      width: 100%;
+      height: 40px;
+      border-radius: 5px;
+      padding: 5px 10px;
+      outline: 0;
+      box-sizing: border-box;
+      margin: 0.5rem 0;
+      font-size: 1rem;
+      border-color: $white3;
+      border-style: solid;
+      font-family: "RobotoCondensed", sans-serif;
+
+      &.textarea {
+        min-height: 200px;
+        height: auto;
+      }
+
+      &:active, &:focus-within, &:focus {
+        border-color: $red;
+        box-shadow: 0 0 10px $red;
+      }
+
+      &.suffix {
+        max-width: 300px;
+        margin-right: 10px;
+      }
+    }
+  }
+}

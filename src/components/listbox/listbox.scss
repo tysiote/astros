@@ -1,0 +1,100 @@
+@import "src/pages/main";
+
+.listbox {
+  margin-bottom: 30px;
+  label {
+    font-weight: bold;
+  }
+  .listbox-items {
+    border: 2px solid $white3;
+    border-radius: 5px;
+    box-sizing: border-box;
+    margin-top: 10px;
+    max-height: 400px;
+    overflow-y: auto;
+
+    .no-item {
+      padding: 0 10px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      color: $white3;
+      font-style: italic;
+    }
+
+    .listbox-item {
+      display: flex;
+      height: 40px;
+      align-items: center;
+      border-bottom: 1px solid $gray1;
+      background-color: $white;
+      padding: 0 10px;
+
+      &:nth-child(2n) {
+        background-color: $white4;
+      }
+
+      &.selectable {
+        &:hover {
+          background-color: $red5;
+          cursor: pointer;
+        }
+      }
+
+      &.selected {
+        background-color: $red4;
+      }
+
+
+      .listbox-item-logo {
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+        width: 16px;
+        height: 16px;
+        margin-right: 10px;
+      }
+
+      .listbox-item-title {
+        width: 100%;
+      }
+
+      .listbox-item-actions {
+        display: flex;
+        button {
+          //padding: 2px;
+          height: 30px;
+          border: 0;
+          background-color: inherit;
+          font-size: 20px;
+
+          &:hover {
+            color: $red;
+          }
+
+          &.disabled {
+            &:hover {
+              color: $white3;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .listbox-add-item {
+    display: flex;
+    justify-content: flex-end;
+
+    .listbox-add-item-modal {
+      .listbox-add-item-modal-footer {
+        display: flex;
+        justify-content: flex-end;
+
+        .button {
+          margin-left: 5px
+        }
+      }
+    }
+  }
+}

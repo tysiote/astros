@@ -1,0 +1,81 @@
+@import "src/pages/main";
+
+.navbar-observer {
+  height: 100px;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.navbar {
+  position: fixed;
+  background-color: rgba(0, 0, 0, 1);
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  z-index: 3;
+  -webkit-transition: background-color 500ms linear;
+  -ms-transition: background-color 500ms linear;
+  transition: background-color 500ms linear;
+
+  &.at-top {
+    background-color: rgba(0, 0, 0, 0.2);
+    -webkit-transition: background-color 100ms linear;
+    -ms-transition: background-color 100ms linear;
+    transition: background-color 100ms linear;
+  }
+
+  .navbar-logo {
+    padding: 10px 0 10px 30px;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    color: $red;
+
+    .logo {
+      margin-right: 5px;
+      height: 40px;
+      width: 40px;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+    }
+
+    &:hover {
+      cursor: pointer;
+      color: $white;
+    }
+  }
+
+  .navbar-items {
+    padding-right: 30px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    .navbar-item {
+      //border-right: 1px solid $white3;
+      display: flex;
+      align-items: center;
+      padding: 5px 10px;
+      font-size: 14px;
+      color: $white2;
+      
+      &:hover {
+        cursor: pointer;
+        //color: $white;
+      }
+
+      &.visible {
+        //color: $red;
+      }
+    }
+  }
+}
+
+@media (max-width: 800px) {
+  .navbar {
+    display: none;
+  }
+}

@@ -1,0 +1,19 @@
+@import "src/pages/main";
+
+.footer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  color: $white3;
+  padding: 20px 0;
+  background-color: $black;
+
+  a {
+    color: $white2;
+    margin-left: 5px;
+
+    &:hover {
+      color: $white;
+    }
+  }
+}

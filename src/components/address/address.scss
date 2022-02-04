@@ -1,0 +1,24 @@
+@import "src/pages/main";
+
+.address {
+  .address-title {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    margin-bottom: 10px;
+
+    .address-logo {
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+      margin-right: 5px;
+      height: 40px;
+      width: 40px;
+    }
+  }
+
+  .address-description {
+    font-size: 16px;
+    white-space: pre-wrap;
+  }
+}

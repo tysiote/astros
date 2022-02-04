@@ -1,0 +1,149 @@
+@import "src/pages/main";
+
+
+
+.admin-section {
+  background-color: $white;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+
+  p {
+    margin-bottom: 20px;
+    line-height: 1.5em;
+  }
+
+  a {
+    color: $red3;
+
+    &:hover {
+      color: $red2;
+    }
+  }
+
+  .admin-tab-content {
+    width: 100%;
+    padding-left: 300px;
+    -webkit-transition: padding-left 100ms linear;
+    -ms-transition: padding-left 100ms linear;
+    transition: padding-left 100ms linear;
+
+    &.minimized {
+      padding-left: 50px;
+      -webkit-transition: padding-left 100ms linear;
+      -ms-transition: padding-left 100ms linear;
+      transition: padding-left 100ms linear;
+    }
+  }
+}
+
+.admin-advanced-page-content {
+  padding: 100px 50px;
+  max-width: 500px;
+
+  .uploader {
+    margin-bottom: 30px;
+  }
+
+  .save-form {
+    display: flex;
+    margin-top: 20px;
+    justify-content: flex-end;
+
+    button {
+      min-width: 200px;
+    }
+  }
+}
+
+.admin-basic-page-content {
+  padding: 100px 50px;
+  max-width: 500px;
+
+  .uploader {
+    margin-bottom: 30px;
+  }
+
+  .admin-basic-showcase {
+    display: flex;
+    align-items: center;
+
+    .admin-basic-showcase-logo {
+      margin-right: 5px;
+      height: 40px;
+      width: 40px;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+  }
+
+  .admin-basic-color-picker {
+    margin-top: 10px;
+  }
+
+  .save-form {
+    display: flex;
+    margin-top: 20px;
+    justify-content: flex-end;
+
+    button {
+      min-width: 200px;
+    }
+  }
+}
+
+.admin-publish-page {
+  .admin-publish-page-content {
+    padding: 100px 50px;
+    max-width: 800px;
+
+    .admin-publish-migration-stats {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .admin-publish-url {
+        display: flex;
+        flex-direction: column;
+      }
+    }
+  }
+}
+
+.admin-content-main-page {
+  .admin-content-main-page-content {
+    padding: 100px 50px;
+    max-width: 800px;
+
+    .save-form {
+      display: flex;
+      margin-top: 20px;
+      justify-content: flex-end;
+
+      button {
+        min-width: 200px;
+      }
+    }
+  }
+}
+
+.admin-section-page {
+  .admin-section-page-content {
+    padding: 100px 50px;
+    max-width: 1000px;
+
+    .admin-section-active-widget {
+      border-top: 1px solid $white3;
+    }
+
+    .save-form {
+      display: flex;
+      margin-top: 20px;
+      justify-content: flex-end;
+
+      button {
+        min-width: 200px;
+      }
+    }
+  }
+}

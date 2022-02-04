@@ -1,0 +1,30 @@
+$black: #212121;
+$white: #FAFAFA;
+$white2: #B0BEC5;
+$white3: #9E9E9E;
+$white4: #EEEEEE;
+$blue: #19078c;
+$red: #EF5350;
+$red2: #E53935;
+$red3: #FF8A80;
+$red4: #FFEBEE;
+$red5: #FFCDD2;
+$gray1: #E0E0E0;
+
+body {
+  margin: 0;
+}
+
+.main-app {
+  background-color: $black;
+  min-height: 100vh;
+  padding: 0;
+  margin: 0;
+
+  .fetching-page {
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+  }
+}

@@ -1,0 +1,25 @@
+@import "src/pages/main";
+
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  .loader-spinner {
+    display: flex;
+    justify-content: center;
+    margin: 0 40px 0 0;
+    min-width: 200px;
+  }
+
+  .loader-text {
+    display: flex;
+    //justify-content: center;
+    padding-left: 30%;
+    min-width: 200px;
+    padding-top: 50px;
+    font-size: 28px;
+    color: $white;
+  }
+}
