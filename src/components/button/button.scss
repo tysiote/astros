@@ -10,6 +10,13 @@
   padding: 5px 20px;
   border: 1px solid $white3;
   font-family: "RobotoCondensed", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .button-icon {
+    margin-right: 10px;
+  }
 
   &:hover {
     cursor: pointer;
@@ -35,6 +42,25 @@
 
       &.disabled {
         background-color: $red3;
+      }
+    }
+  }
+
+  &.info {
+    background-color: $orange1;
+    border-color: $orange2;
+    color: white;
+
+    &.disabled {
+      background-color: $orange3;
+      border-color: $orange3;
+    }
+
+    &:hover {
+      background-color: $orange2;
+
+      &.disabled {
+        background-color: $orange3;
       }
     }
   }

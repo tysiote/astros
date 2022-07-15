@@ -7,9 +7,9 @@ import {
   translateWidgetTitle,
 } from '../../utils'
 import { SeekStepBar } from '../../../components/seek-step-bar/seek-step-bar'
-import { Input, Styler } from '../../../components'
+import { Input, Styler, Translations } from '../../../components'
 
-export const AdminWidgetAddress = ({ widget, data, onChange }) => {
+export const AdminWidgetAddress = ({ widget, data, onChange, forceRefresh }) => {
   const { type, position, widgetData, id } = widget
   const [tempData, setTempData] = useState(widget)
   const [widgetStyles, setWidgetStyles] = useState(tempData ? tempData.style : widget.style)
@@ -23,8 +23,6 @@ export const AdminWidgetAddress = ({ widget, data, onChange }) => {
     { title: 'Center', value: 'center' },
     { title: 'Right', value: 'right' },
   ]
-
-  console.log(tempData)
 
   useEffect(() => {
     setPos(position)
@@ -89,6 +87,17 @@ export const AdminWidgetAddress = ({ widget, data, onChange }) => {
           label="Address content"
           textarea
         />
+        <Translations
+          item={{
+            id: tempData.widgetData[0].id,
+            itemValue: tempData.widgetData[0].description,
+            isTextArea: true,
+            description: true,
+          }}
+          translations={data.translations}
+          languages={data.languages}
+          forceRefresh={forceRefresh}
+        />
 
         <Styler
           className="admin-active-section-styler-address"
@@ -98,6 +107,7 @@ export const AdminWidgetAddress = ({ widget, data, onChange }) => {
           onSave={handleOnAddressStylesChange}
           hasFontStyles
           hasColor
+          hasShowLogo
         />
       </div>
     </div>
@@ -108,4 +118,5 @@ AdminWidgetAddress.propTypes = {
   widget: PropTypes.object.isRequired,
   data: PropTypes.object.isRequired,
   onChange: PropTypes.func.isRequired,
+  forceRefresh: PropTypes.func.isRequired,
 }

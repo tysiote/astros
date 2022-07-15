@@ -8,10 +8,10 @@ import {
   purgeArrayFromUndefined,
   translateWidgetTitle,
 } from '../../utils'
-import { Button, Input, Styler } from '../../../components'
+import { Button, Input, Styler, Translations } from '../../../components'
 import { SeekStepBar } from '../../../components/seek-step-bar/seek-step-bar'
 
-export const AdminWidgetArticle = ({ widget, data, onChange }) => {
+export const AdminWidgetArticle = ({ widget, data, onChange, forceRefresh }) => {
   const { type, position, widgetData } = widget
   const [pos, setPos] = useState(position)
   const heading = findHeadingInWidget(widgetData)?.[0]
@@ -58,9 +58,21 @@ export const AdminWidgetArticle = ({ widget, data, onChange }) => {
     onChange(widget.id, { ...widget, widgetData: purgeArrayFromUndefined([head, desc]) })
   }
 
-  const handleOnWidgetStylesChange = newValue => setWidgetStyles(newValue)
-  const handleOnHeaderStylesChange = newValue => setHeaderStyles(newValue)
-  const handleOnContentStylesChange = newValue => setContentStyles(newValue)
+  const handleOnWidgetStylesChange = newValue => {
+    setWidgetStyles(newValue)
+    onChange(widget.id, { ...widget, style: newValue })
+  }
+  const handleOnHeaderStylesChange = newValue => {
+    setHeaderStyles(newValue)
+    onChange(widget.id, {
+      ...widget,
+      widgetData: [{ ...heading, style: { ...newValue, isHeading: true } }, description],
+    })
+  }
+  const handleOnContentStylesChange = newValue => {
+    setContentStyles(newValue)
+    onChange(widget.id, { ...widget, widgetData: [heading, { ...description, style: newValue }] })
+  }
   const handleOnHeaderRemoved = () => {
     const desc = findDescriptionInWidget(widgetData)?.[0]
     onChange(widget.id, { ...widget, widgetData: purgeArrayFromUndefined([desc]) })
@@ -124,6 +136,12 @@ export const AdminWidgetArticle = ({ widget, data, onChange }) => {
             label="Heading:"
             placeholder="Enter heading"
           />
+          <Translations
+            item={{ id: heading.id, type: 'article', itemValue: header }}
+            translations={data.translations}
+            languages={data.languages}
+            forceRefresh={forceRefresh}
+          />
           <div className="header-options">
             <Styler
               className="admin-active-section-styler-header"
@@ -155,6 +173,12 @@ export const AdminWidgetArticle = ({ widget, data, onChange }) => {
             label="Article content:"
             textarea
           />
+          <Translations
+            item={{ id: description.id, itemValue: content, isTextArea: true, description: true }}
+            translations={data.translations}
+            languages={data.languages}
+            forceRefresh={forceRefresh}
+          />
           <div className="header-options">
             <Styler
               className="admin-active-section-styler-content"
@@ -183,4 +207,5 @@ AdminWidgetArticle.propTypes = {
   widget: PropTypes.object.isRequired,
   data: PropTypes.object.isRequired,
   onChange: PropTypes.func.isRequired,
+  forceRefresh: PropTypes.func.isRequired,
 }

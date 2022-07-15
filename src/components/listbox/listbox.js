@@ -44,10 +44,10 @@ export const Listbox = ({ className, label, items, actions, assetsPath, selected
     }
   }
 
-  const handleOnRemoveClick = (value, e) => {
+  const handleOnRemoveClick = (value, id, e) => {
     e.preventDefault()
     e.stopPropagation()
-    onRemove(value)
+    onRemove(value, id)
   }
 
   const handleOnMoveUp = (value, e) => {
@@ -91,7 +91,7 @@ export const Listbox = ({ className, label, items, actions, assetsPath, selected
   }
 
   const renderOneItem = (item, idx) => {
-    const { id, title, itemTitle, logo, enabled } = item
+    const { id, title, itemTitle, logo, enabled = false, type } = item
     return (
       <div
         id={id}
@@ -132,7 +132,11 @@ export const Listbox = ({ className, label, items, actions, assetsPath, selected
           )}
           {onRemove && (
             <div className="listbox-item-action">
-              <Button icon="trash" onClick={e => handleOnRemoveClick(itemTitle ?? title, e)}>
+              <Button
+                icon="trash"
+                onClick={type === 'group' ? () => {} : e => handleOnRemoveClick(itemTitle ?? title, id, e)}
+                disabled={type === 'group'}
+              >
                 {onRemoveText}
               </Button>
             </div>

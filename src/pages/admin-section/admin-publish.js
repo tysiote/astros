@@ -1,19 +1,23 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { Button } from '../../components'
-import { getResource } from '../utils'
+import { getResource, makePostRequest } from '../utils'
 import './admin.scss'
 
 export const AdminPublish = ({ data }) => {
   const [loading, setLoading] = useState(false)
   const betaURL = getResource('beta_url', data.core)
+  const [recentlyMigrated, setRecentlyMigrated] = useState(false)
 
   const handleOnMigrateStart = () => {
     setLoading(true)
+    makePostRequest('migrate', {}).then(res => handleOnMigrateEnd())
   }
 
   const handleOnMigrateEnd = () => {
     setLoading(false)
+    setRecentlyMigrated(true)
+    setTimeout(() => setRecentlyMigrated(false), 30000)
   }
 
   return (
@@ -55,6 +59,7 @@ export const AdminPublish = ({ data }) => {
           </div>
         </div>
         <p>You can start the migration process by clicking on the button above.</p>
+        {recentlyMigrated && <p className="migration-success">The migration has been successfully processed.</p>}
       </div>
     </div>
   )

@@ -14,8 +14,10 @@ export const Input = ({
   inputRef,
   textarea,
   suffix,
+  type,
+  ...rest
 }) => {
-  const [val, setVal] = useState(value)
+  const [val, setVal] = useState(value ?? '')
 
   useEffect(() => {
     setVal(value ?? '')
@@ -31,6 +33,7 @@ export const Input = ({
     onChange: handleOnChange,
     value: val,
     ref: inputRef,
+    type,
   }
   return (
     <div className={classNames('form-group', { suffix })}>
@@ -45,9 +48,9 @@ export const Input = ({
       ) : (
         <div className="form-group-input-wrapper">
           <input
+            {...rest}
             {...commonProps}
             autoComplete="off"
-            type="text"
             className={classNames('form-group-input', inputClassName, { suffix })}
           />
           {suffix}
@@ -68,6 +71,7 @@ Input.propTypes = {
   inputRef: PropTypes.oneOfType([PropTypes.func, PropTypes.shape({ current: PropTypes.node })]),
   textarea: PropTypes.bool,
   suffix: PropTypes.node,
+  type: PropTypes.string,
 }
 
 Input.defaultProps = {
@@ -80,4 +84,5 @@ Input.defaultProps = {
   inputRef: () => {},
   textarea: false,
   suffix: null,
+  type: 'text',
 }

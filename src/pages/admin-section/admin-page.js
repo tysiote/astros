@@ -48,7 +48,13 @@ export class AdminPage extends Component {
   }
 
   handleSettingsChanged = data => {
-    this.refreshContent()
+    if (data) {
+      makePostRequest('saveSection', data).then(() => {
+        this.refreshContent()
+      })
+    } else {
+      this.refreshContent()
+    }
   }
 
   renderBasicSettings = () => {
@@ -75,7 +81,15 @@ export class AdminPage extends Component {
     const section = findTabById(data.sections, activeTab)
 
     if (section?.length) {
-      return <AdminSection onChange={this.handleSettingsChanged} section={section[0]} data={data} isSaving={saving} />
+      return (
+        <AdminSection
+          onChange={this.handleSettingsChanged}
+          section={section[0]}
+          data={data}
+          isSaving={saving}
+          forceRefresh={this.refreshContent}
+        />
+      )
     }
 
     switch (activeTab) {

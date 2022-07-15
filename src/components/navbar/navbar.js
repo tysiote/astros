@@ -4,8 +4,9 @@ import { scroller } from 'react-scroll'
 import classNames from 'classnames'
 import './navbar.scss'
 import { InView } from 'react-intersection-observer'
-import { getBackendURL, getResource } from '../../pages/utils'
+import { getBackendURL, getResource, getTranslationById } from '../../pages/utils'
 import PropTypes from 'prop-types'
+import { LanguageSelector } from '../language-selector'
 
 export class Navbar extends Component {
   constructor(props) {
@@ -53,13 +54,16 @@ export class Navbar extends Component {
     })
   }
 
+  handleOnLanguageSelect = abbr => {
+    const { onLanguageChange } = this.props
+
+    onLanguageChange(abbr)
+  }
+
   render() {
-    const {
-      sections,
-      inViewId,
-      otherData: { core },
-    } = this.props
+    const { sections, inViewId, otherData, languages, selectedLanguage } = this.props
     const { atTop, hoveredItem } = this.state
+    const { core, translations } = otherData
     const assetsPath = getResource('assets_path', core)
     const themeColor = getResource('theme_color', core)
     const logoPath = getResource('logo_path', core)
@@ -85,6 +89,7 @@ export class Navbar extends Component {
           <div className="navbar-items">
             {sections.map(section => {
               const isVisible = inViewId === section[0].id
+              const trans = getTranslationById({ translations, lang: selectedLanguage, contentId: section[0].id })
               return (
                 <div
                   className={classNames('navbar-item', { visible: isVisible })}
@@ -94,10 +99,18 @@ export class Navbar extends Component {
                   onMouseEnter={() => this.handleOnMouseEnter(section[0].id)}
                   onMouseLeave={this.handleOnMouseLeave}
                 >
-                  {section[0].value}
+                  {trans?.value ?? section[0].value}
                 </div>
               )
             })}
+            {languages && (
+              <LanguageSelector
+                otherData={otherData}
+                languages={languages}
+                onChange={this.handleOnLanguageSelect}
+                selected={selectedLanguage}
+              />
+            )}
           </div>
         </div>
       </>
@@ -110,7 +123,11 @@ Navbar.propTypes = {
   inViewId: propTypes.oneOfType([propTypes.string, propTypes.number]),
   otherData: PropTypes.shape({
     core: PropTypes.array,
+    translations: PropTypes.array,
   }).isRequired,
+  languages: PropTypes.array.isRequired,
+  selectedLanguage: PropTypes.string.isRequired,
+  onLanguageChange: PropTypes.func.isRequired,
 }
 
 Navbar.defaultProps = {

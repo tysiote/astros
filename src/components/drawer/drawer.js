@@ -25,11 +25,15 @@ export const Drawer = ({
   hasMinHeight,
   hasIconSize,
   hasFooterColor,
+  hasShowLogo,
+  hasButtonBgColor,
+  hasButtonColor,
   styles,
 }) => {
   if (!visible) {
     return <div className="drawer" />
   }
+
   const [disabled, setDisabled] = useState(false)
   const [bgMode, setBgMode] = useState(false)
   const [color, setColor] = useState(styles.color ?? '')
@@ -39,6 +43,9 @@ export const Drawer = ({
   const [width, setWidth] = useState(styles.maxWidth ?? '')
   const [height, setHeight] = useState(styles.minHeight ?? '')
   const [icon, setIcon] = useState(styles.iconSize ?? '')
+  const [showLogo, setShowLogo] = useState(styles.hasLogo ?? false)
+  const [buttonColor, setButtonColor] = useState(styles.buttonColor ?? '')
+  const [buttonBgColor, setButtonBgColor] = useState(styles.buttonBgColor ?? '')
   const [paddings, setPaddings] = useState([
     styles.paddingTop ?? '',
     styles.paddingRight ?? '',
@@ -57,7 +64,6 @@ export const Drawer = ({
     underline: styles.textDecoration === 'underline' ?? false,
     size: styles.fontSize ?? '14px',
   })
-  console.log('styles', styles)
 
   const paddingTypes = ['Top', 'Right', 'Bottom', 'Left']
   const paddingInputs = paddingTypes.map((type, idx) => (
@@ -87,6 +93,8 @@ export const Drawer = ({
   const handleOnColorChange = newValue => setColor(newValue)
   const handleOnFooterColorChange = newValue => setFooterColor(newValue)
   const handleOnBgColorChange = newValue => setBgColor(newValue)
+  const handleOnButtonColorChange = newValue => setButtonColor(newValue)
+  const handleOnButtonBgColorChange = newValue => setButtonBgColor(newValue)
 
   const handleOnPaddingsChange = (idx, val) => {
     const newPaddings = [...paddings]
@@ -113,6 +121,7 @@ export const Drawer = ({
   const handleOnIconChange = newSize => setIcon(newSize)
 
   const handleOnFontStyleChanges = (key, val) => setFontStyles({ ...fontStyles, [key]: val })
+  const handleOnShowLogoChange = newValue => setShowLogo(newValue)
 
   const handleOnSave = () => {
     const saveData = {}
@@ -161,7 +170,18 @@ export const Drawer = ({
       saveData.textDecoration = fontStyles.underline ? 'underline' : undefined
     }
 
-    console.log('saving', saveData)
+    if (hasShowLogo) {
+      saveData.hasLogo = showLogo || undefined
+    }
+
+    if (hasButtonColor) {
+      saveData.buttonColor = buttonColor || undefined
+    }
+
+    if (hasButtonBgColor) {
+      saveData.buttonBgColor = buttonBgColor || undefined
+    }
+
     onSave(saveData)
   }
 
@@ -289,6 +309,32 @@ export const Drawer = ({
     </div>
   ) : null
 
+  const showLogoPart = hasShowLogo ? (
+    <div className="styler-part">
+      <h2>Logo</h2>
+      <Switch
+        onChange={val => handleOnShowLogoChange(val)}
+        checked={showLogo}
+        label="Show company logo:"
+        disabled={disabled}
+      />
+    </div>
+  ) : null
+
+  const buttonColorPart = hasButtonColor ? (
+    <div className="styler-part">
+      <h2>Text color</h2>
+      <ColorPicker onChange={handleOnButtonColorChange} value={buttonColor} disabled={disabled} />
+    </div>
+  ) : null
+
+  const buttonBgColorPart = hasButtonBgColor ? (
+    <div className="styler-part">
+      <h2>Background color</h2>
+      <ColorPicker onChange={handleOnButtonBgColorChange} value={buttonBgColor} disabled={disabled} />
+    </div>
+  ) : null
+
   return (
     <div className={classNames('drawer', className, { visible })}>
       <div className="drawer-inner">
@@ -308,6 +354,9 @@ export const Drawer = ({
           {iconPart}
           {paddingsPart}
           {marginsPart}
+          {showLogoPart}
+          {buttonColorPart}
+          {buttonBgColorPart}
         </div>
 
         <div className="drawer-footer">
@@ -338,6 +387,9 @@ Drawer.propTypes = {
   hasMaxWidth: PropTypes.bool,
   hasIconSize: PropTypes.bool,
   hasFooterColor: PropTypes.bool,
+  hasShowLogo: PropTypes.bool,
+  hasButtonColor: PropTypes.bool,
+  hasButtonBgColor: PropTypes.bool,
   styles: PropTypes.object,
 }
 
@@ -354,5 +406,8 @@ Drawer.defaultProps = {
   hasMaxWidth: false,
   hasIconSize: false,
   hasFooterColor: false,
+  hasShowLogo: false,
+  hasButtonColor: false,
+  hasButtonBgColor: false,
   styles: {},
 }

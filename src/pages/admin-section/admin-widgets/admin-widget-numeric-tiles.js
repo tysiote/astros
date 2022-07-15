@@ -22,9 +22,9 @@ import {
   translateWidgetTitle,
 } from '../../utils'
 import { SeekStepBar } from '../../../components/seek-step-bar/seek-step-bar'
-import { Input, Listbox, Styler } from '../../../components'
+import { Input, Listbox, Styler, Translations } from '../../../components'
 
-export const AdminWidgetNumericTiles = ({ widget, data, onChange }) => {
+export const AdminWidgetNumericTiles = ({ widget, data, onChange, forceRefresh }) => {
   const { type, position, widgetData, id } = widget
   const tempDataDefault = { ...widget, widgetData: mapNumericTilesToListbox(widgetData) }
   const [tempData, setTempData] = useState(tempDataDefault)
@@ -95,7 +95,6 @@ export const AdminWidgetNumericTiles = ({ widget, data, onChange }) => {
   }
 
   const handleOnTileChange = newData => {
-    console.log(newData)
     const newWidgets = newData.style
       ? alterTileInWidgetDataStyle(tempData.widgetData, newData)
       : alterTileInWidgetData(tempData.widgetData, newData)
@@ -110,7 +109,6 @@ export const AdminWidgetNumericTiles = ({ widget, data, onChange }) => {
   }
 
   const updateStates = (activeTile, newTempData) => {
-    console.log({ activeTile, newTempData })
     setTempData(newTempData)
     setTitleStyle(translateTileTitleStyleIntoStyle(activeTile.style ?? {}))
     setDescriptionStyle(translateTileDescriptionStyleIntoStyle(activeTile.style ?? {}))
@@ -142,6 +140,12 @@ export const AdminWidgetNumericTiles = ({ widget, data, onChange }) => {
           onChange={val => handleOnTileChange({ id: activeTile.id, title: val })}
           label="Title"
         />
+        <Translations
+          item={{ id: activeTile.id, itemValue: activeTile.title }}
+          translations={data.translations}
+          languages={data.languages}
+          forceRefresh={forceRefresh}
+        />
         <Styler
           className="admin-active-section-styler-numeric-tiles-title"
           label="Custom styles for Title"
@@ -158,6 +162,12 @@ export const AdminWidgetNumericTiles = ({ widget, data, onChange }) => {
           value={activeTile.description}
           onChange={val => handleOnTileChange({ id: activeTile.id, description: val })}
           label="Description"
+        />
+        <Translations
+          item={{ id: activeTile.id, itemValue: activeTile.description, description: true }}
+          translations={data.translations}
+          languages={data.languages}
+          forceRefresh={forceRefresh}
         />
         <Styler
           className="admin-active-section-styler-numeric-tiles-description"
@@ -207,7 +217,7 @@ export const AdminWidgetNumericTiles = ({ widget, data, onChange }) => {
         selectedItem={activeTile?.id}
         actions={{
           onSelected: handleOnTileSelected,
-          onRemove: handleOnRemove,
+          onRemove: items.length > 1 ? handleOnRemove : null,
           onAdd: handleOnTileAdd,
           onAddText: 'Add another tile below',
           onMoveUp: id => handleOnShiftPosition(id, -1),
@@ -224,4 +234,5 @@ AdminWidgetNumericTiles.propTypes = {
   widget: PropTypes.object.isRequired,
   data: PropTypes.object.isRequired,
   onChange: PropTypes.func.isRequired,
+  forceRefresh: PropTypes.func.isRequired,
 }

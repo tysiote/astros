@@ -1,0 +1,56 @@
+@import "src/pages/main";
+
+.language-selector {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .language-selected {
+    display: flex;
+    width: 80px;
+    color: $white2;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px;
+
+    .language-flag {
+      margin-right: 10px;
+    }
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  .language-menu {
+    display: flex;
+    position: absolute;
+    flex-direction: column;
+    //background-color: rgba(50,50,50,0.2);
+    background-color: black;
+    color: $white2;
+    top: 45px;
+
+    .language-item {
+      display: flex;
+      flex-direction: row;
+      padding: 10px;
+      align-items: center;
+      justify-content: flex-start;
+
+      .language-title {
+        margin-left: 10px;
+      }
+
+      &:hover {
+        cursor: pointer;
+        background-color: $black2;
+      }
+    }
+  }
+
+  .language-flag {
+    width: 16px;
+    height: 16px;
+  }
+}

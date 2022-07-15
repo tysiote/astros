@@ -7,6 +7,7 @@
   right: 0;
   width: 0;
   background-color: $white4;
+  z-index: 1;
   -webkit-transition: width 100ms linear;
   -ms-transition: width 100ms linear;
   transition: width 100ms linear;

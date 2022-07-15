@@ -23,9 +23,9 @@ import {
   alterTileDataByRemoval,
 } from '../../utils'
 import { SeekStepBar } from '../../../components/seek-step-bar/seek-step-bar'
-import { IconPicker, Input, Listbox, Styler } from '../../../components'
+import { IconPicker, Input, Listbox, Styler, Translations } from '../../../components'
 
-export const AdminWidgetFullTiles = ({ widget, data, onChange }) => {
+export const AdminWidgetFullTiles = ({ widget, data, onChange, forceRefresh }) => {
   const { type, position, widgetData, id } = widget
   const [pos, setPos] = useState(position)
   const posSteps = [
@@ -38,24 +38,24 @@ export const AdminWidgetFullTiles = ({ widget, data, onChange }) => {
   const [items, setItems] = useState(itemsDefault)
   const activeTileDefault = items?.length ? items[0] : null
   const [activeTile, setActiveTile] = useState(activeTileDefault)
-  const [icon, setIcon] = useState(activeTile ? activeTile.icon : activeTileDefault.icon)
-  const [tileStyles, setTileStyles] = useState(activeTile ? activeTile.style ?? {} : activeTileDefault.style ?? {})
+  const [icon, setIcon] = useState(activeTile ? activeTile?.icon : activeTileDefault?.icon)
+  const [tileStyles, setTileStyles] = useState(activeTile ? activeTile.style ?? {} : activeTileDefault?.style ?? {})
   const [widgetStyles, setWidgetStyles] = useState(widget.style)
 
   const [titleStyle, setTitleStyle] = useState(
-    translateTileTitleStyleIntoStyle(activeTile ? activeTile.style ?? {} : activeTileDefault.style ?? {}),
+    translateTileTitleStyleIntoStyle(activeTile ? activeTile.style ?? {} : activeTileDefault?.style ?? {}),
   )
   const [descriptionStyle, setDescriptionStyle] = useState(
-    translateTileDescriptionStyleIntoStyle(activeTile ? activeTile.style ?? {} : activeTileDefault.style ?? {}),
+    translateTileDescriptionStyleIntoStyle(activeTile ? activeTile.style ?? {} : activeTileDefault?.style ?? {}),
   )
   const [iconStyle, setIconStyle] = useState(
-    translateTileIconStyleIntoStyle(activeTile ? activeTile.style ?? {} : activeTileDefault.style ?? {}),
+    translateTileIconStyleIntoStyle(activeTile ? activeTile.style ?? {} : activeTileDefault?.style ?? {}),
   )
 
   useEffect(() => {
     setPos(position)
     setWidgetStyles(widget.style)
-    setTileStyles(activeTile ? activeTile.style ?? {} : activeTileDefault.style ?? {})
+    setTileStyles(activeTile ? activeTile.style ?? {} : activeTileDefault?.style ?? {})
     setItems(mapFullTilesToListbox(tempData.widgetData))
   }, [widget])
 
@@ -66,6 +66,7 @@ export const AdminWidgetFullTiles = ({ widget, data, onChange }) => {
 
   const handleOnWidgetStylesChange = newValue => {
     setWidgetStyles(newValue)
+    onChange(id, { ...widget, style: newValue })
   }
 
   const handleOnIconSelect = newValue => {
@@ -104,12 +105,10 @@ export const AdminWidgetFullTiles = ({ widget, data, onChange }) => {
 
   const handleOnRemove = title => {
     const newTempData = { ...tempData, widgetData: alterTileDataByRemoval(tempData.widgetData, title) }
-    console.log(title, alterTileDataByRemoval(tempData.widgetData, title))
     updateStates(activeTile, newTempData)
   }
 
   const updateStates = (activeTile, newTempData) => {
-    console.log('updating states', activeTile, newTempData)
     setTempData(newTempData)
     setTitleStyle(translateTileTitleStyleIntoStyle(activeTile.style ?? {}))
     setDescriptionStyle(translateTileDescriptionStyleIntoStyle(activeTile.style ?? {}))
@@ -117,7 +116,6 @@ export const AdminWidgetFullTiles = ({ widget, data, onChange }) => {
     setTileStyles(translateTileStyleIntoStyle(activeTile.style ?? {}, activeTile.path))
     setIcon(activeTile.icon)
     setActiveTile(activeTile)
-    console.log('fullTiles', newTempData.widgetData)
     setItems(mapFullTilesToListbox(newTempData.widgetData))
     onChange(id, newTempData, activeTile.id)
   }
@@ -134,7 +132,6 @@ export const AdminWidgetFullTiles = ({ widget, data, onChange }) => {
   }
 
   const renderTileOptions = () => {
-    console.log(activeTile)
     return (
       <div className="tile-options">
         <Styler
@@ -158,6 +155,12 @@ export const AdminWidgetFullTiles = ({ widget, data, onChange }) => {
           onChange={val => handleOnTileChange({ id: activeTile.id, title: val })}
           label="Title"
         />
+        <Translations
+          item={{ id: activeTile.id, itemValue: activeTile.title }}
+          translations={data.translations}
+          languages={data.languages}
+          forceRefresh={forceRefresh}
+        />
         <Styler
           className="admin-active-section-styler-full-tiles-title"
           label="Custom styles for Title"
@@ -174,6 +177,12 @@ export const AdminWidgetFullTiles = ({ widget, data, onChange }) => {
           value={activeTile.description}
           onChange={val => handleOnTileChange({ id: activeTile.id, description: val })}
           label="Description"
+        />
+        <Translations
+          item={{ id: activeTile.id, itemValue: activeTile.description, description: true }}
+          translations={data.translations}
+          languages={data.languages}
+          forceRefresh={forceRefresh}
         />
         <Styler
           className="admin-active-section-styler-full-tiles-description"
@@ -237,7 +246,7 @@ export const AdminWidgetFullTiles = ({ widget, data, onChange }) => {
         selectedItem={activeTile?.id}
         actions={{
           onSelected: handleOnTileSelected,
-          onRemove: handleOnRemove,
+          onRemove: items.length > 1 ? handleOnRemove : null,
           onAdd: handleOnTileAdd,
           onAddText: 'Add another tile below',
           onMoveUp: id => handleOnShiftPosition(id, -1),
@@ -254,4 +263,5 @@ AdminWidgetFullTiles.propTypes = {
   widget: PropTypes.object.isRequired,
   data: PropTypes.object.isRequired,
   onChange: PropTypes.func.isRequired,
+  forceRefresh: PropTypes.func.isRequired,
 }

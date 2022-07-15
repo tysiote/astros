@@ -11,12 +11,22 @@ const iconList = Object.keys(Icons)
   .map(icon => Icons[icon])
 
 library.add(...iconList)
-console.log(library)
 
-export const Button = ({ children, type, onClick, className, icon, disabled, disabledText }) => {
+export const Button = ({ children, type, onClick, className, icon, disabled, disabledText, hint, ...rest }) => {
   return (
-    <button type={type} onClick={onClick} className={classNames('button', className, { disabled })} disabled={disabled}>
-      {icon && <FontAwesomeIcon icon={icon} />}
+    <button
+      {...rest}
+      type={type}
+      onClick={onClick}
+      className={classNames('button', className, { disabled })}
+      disabled={disabled}
+      title={hint}
+    >
+      {icon && (
+        <div className="button-icon">
+          <FontAwesomeIcon icon={icon} />
+        </div>
+      )}
       {disabled ? disabledText ?? children : children}
     </button>
   )
@@ -30,6 +40,7 @@ Button.propTypes = {
   icon: PropTypes.string,
   disabled: PropTypes.bool,
   disabledText: PropTypes.oneOfType([PropTypes.node, PropTypes.string]),
+  hint: PropTypes.string,
 }
 
 Button.defaultProps = {
@@ -40,4 +51,5 @@ Button.defaultProps = {
   icon: null,
   disabled: false,
   disabledText: null,
+  hint: null,
 }

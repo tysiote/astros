@@ -4,7 +4,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as Icons from '@fortawesome/free-solid-svg-icons'
 import './full-tiles.scss'
-import { getBackendURL, getResource } from '../../pages/utils'
+import { getBackendURL, getResource, getTranslationById } from '../../pages/utils'
 
 const iconList = Object.keys(Icons)
   .filter(key => key !== 'fas' && key !== 'prefix')
@@ -15,10 +15,13 @@ library.add(...iconList)
 export class FullTiles extends Component {
   renderOneTile = tile => {
     const {
-      otherData: { core },
+      otherData: { core, translations },
+      lang,
     } = this.props
+
     const assetsPath = getResource('assets_path', core)
     const { icon, title, description, id, style, path } = tile
+    const trans = getTranslationById({ translations, lang, widgetId: id })
     const { titleColor, descriptionColor, iconColor, footerColor, iconSize, titleSize, descriptionSize, ...restStyle } =
       style ?? {}
 
@@ -31,10 +34,10 @@ export class FullTiles extends Component {
             </div>
           )}
           <div className="full-tile-title" style={{ color: titleColor, fontSize: titleSize }}>
-            {title}
+            {trans?.title ?? title}
           </div>
           <div className="full-tile-description" style={{ color: descriptionColor, fontSize: descriptionSize }}>
-            {description}
+            {trans?.description ?? description}
           </div>
         </div>
         <div className="full-tile-footer" style={{ borderColor: footerColor }} />
@@ -71,4 +74,5 @@ FullTiles.propTypes = {
   widgetData: PropTypes.array.isRequired,
   otherData: PropTypes.object.isRequired,
   id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+  lang: PropTypes.string.isRequired,
 }

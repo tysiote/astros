@@ -10,10 +10,11 @@ export class Footer extends Component {
     const years = curYear === yearCreated ? yearCreated : `${yearCreated}-${curYear}`
     return (
       <div className="footer">
-        &copy; {years} Copyright |{' '}
-        <a href="https://www.tila.sk/?ref=astros" target="_blank" rel="noreferrer">
-          Tila s.r.o.
-        </a>
+        &copy; {years}
+        {/*Copyright |{' '}*/}
+        {/*<a href="https://www.tila.sk/?ref=astros" target="_blank" rel="noreferrer">*/}
+        {/*  Tila s.r.o.*/}
+        {/*</a>*/}
         {/*<div onClick={onAdminClick}>ADMIN</div>*/}
       </div>
     )

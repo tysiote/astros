@@ -3,7 +3,7 @@ import propTypes from 'prop-types'
 import classNames from 'classnames'
 import './section.scss'
 import { determineSectionColumns, getBackendURL, getResource, getSectionContentOrder } from '../../pages/utils'
-import { Address, Form, SocialNetworks, LogoTiles, NumericTiles, FullTiles, Article, Animation } from '../index'
+import { Address, Form, SocialNetworks, LogoTiles, NumericTiles, FullTiles, Article, Animation, Image } from '../index'
 import { Element } from 'react-scroll'
 import { InView } from 'react-intersection-observer'
 
@@ -50,7 +50,7 @@ export class Section extends Component {
   }
 
   renderWidget = item => {
-    const { otherData } = this.props
+    const { otherData, lang } = this.props
     const { type, position, id } = item
     const className = classNames('section-widget', { right: position === 'right', center: position === 'center' })
 
@@ -58,49 +58,55 @@ export class Section extends Component {
       case 'full_tiles':
         return (
           <div className={className} key={`section-widget-${id}`}>
-            <FullTiles {...item} otherData={otherData} />
+            <FullTiles {...item} lang={lang} otherData={otherData} />
           </div>
         )
       case 'logos':
         return (
           <div className={className} key={`section-widget-${id}`}>
-            <LogoTiles {...item} otherData={otherData} />
+            <LogoTiles {...item} lang={lang} otherData={otherData} />
           </div>
         )
       case 'numeric_tiles':
         return (
           <div className={className} key={`section-widget-${id}`}>
-            <NumericTiles {...item} />
+            <NumericTiles lang={lang} {...item} otherData={otherData} />
           </div>
         )
       case 'address':
         return (
           <div className={className} key={`section-widget-${id}`}>
-            <Address {...item} otherData={otherData} />
+            <Address {...item} lang={lang} otherData={otherData} />
           </div>
         )
       case 'social':
         return (
           <div className={className} key={`section-widget-${id}`}>
-            <SocialNetworks {...item} otherData={otherData} />
+            <SocialNetworks lang={lang} {...item} otherData={otherData} />
           </div>
         )
       case 'form':
         return (
           <div className={className} key={`section-widget-${id}`}>
-            <Form {...item} otherData={otherData} />
+            <Form {...item} lang={lang} otherData={otherData} />
           </div>
         )
       case 'article':
         return (
           <div className={className} key={`section-widget-${id}`}>
-            <Article {...item} />
+            <Article {...item} lang={lang} otherData={otherData} />
           </div>
         )
       case 'animation':
         return (
           <div className={className} key={`section-widget-${id}`}>
-            <Animation {...item} otherData={otherData} />
+            <Animation {...item} lang={lang} otherData={otherData} />
+          </div>
+        )
+      case 'image':
+        return (
+          <div className={className} key={`section-widget-${id}`}>
+            <Image {...item} lang={lang} otherData={otherData} />
           </div>
         )
       default:
@@ -116,7 +122,8 @@ export class Section extends Component {
       isEmpty,
     } = this.props
     const assetsPath = getResource('assets_path', core)
-    const { position, style, path, id } = item
+    const { position, style, path: itemPath, id } = item
+    const path = itemPath ?? style?.backgroundPath
 
     return (
       <Element
@@ -138,7 +145,7 @@ export class Section extends Component {
   }
 
   renderGroup = item => {
-    const { otherData, onViewChanged } = this.props
+    const { otherData, onViewChanged, lang } = this.props
 
     return (
       <div className="section-group" key={`section-group-${item.id}`}>
@@ -150,6 +157,7 @@ export class Section extends Component {
             onViewChanged={onViewChanged}
             fromGroup={true}
             isEmpty={itm.type === 'section'}
+            lang={lang}
           />
         ))}
       </div>
@@ -182,6 +190,7 @@ export class Section extends Component {
 Section.propTypes = {
   sectionData: propTypes.array,
   otherData: propTypes.object,
+  lang: propTypes.string.isRequired,
   onViewChanged: propTypes.func.isRequired,
   fromGroup: propTypes.bool,
   isEmpty: propTypes.bool,

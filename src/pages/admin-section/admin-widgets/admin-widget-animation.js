@@ -8,8 +8,8 @@ export const AdminWidgetAnimation = ({ widget, data, onChange }) => {
   const { type, position, widgetData, id } = widget
   const [tempData, setTempData] = useState(widget)
   const [pos, setPos] = useState(position)
-  const [count, setCount] = useState(widgetData[0]?.style['count'] ?? 100)
-  const [color, setColor] = useState(widgetData[0]?.style['color'] ?? getResource('theme_color', data.core))
+  const [count, setCount] = useState(widgetData[0]?.style?.['count'] ?? 100)
+  const [color, setColor] = useState(widgetData[0]?.style?.['color'] ?? getResource('theme_color', data.core))
   const posSteps = [
     { title: 'Left', value: 'left' },
     { title: 'Center', value: 'center' },

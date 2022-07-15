@@ -31,6 +31,15 @@
         &:active, &:focus-within, &:focus {
           border-color: $red;
           box-shadow: 0 0 10px #719ECE;
+
+          &.disabled {
+            border-color: $white2;
+            box-shadow:  0 0;
+          }
+        }
+
+        &.disabled {
+          background-color: $white2;
         }
       }
 

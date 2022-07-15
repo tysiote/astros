@@ -44,7 +44,6 @@ export const AdminAdvanced = ({ data, onChange }) => {
   }
 
   const handleOnEmailRemoved = value => {
-    console.log('removal', value)
     setEmails(alterEmailsByRemoval(emails, value))
   }
 

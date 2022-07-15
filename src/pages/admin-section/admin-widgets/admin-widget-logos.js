@@ -29,7 +29,6 @@ export const AdminWidgetLogos = ({ widget, data, onChange }) => {
   const [logoStyles, setLogoStyles] = useState(activeLogo ? activeLogo.style ?? {} : activeLogoDefault.style ?? {})
   const [disabled, setDisabled] = useState(false)
   const [logoPath, setLogoPath] = useState(activeLogo ? activeLogo.path : activeLogoDefault.path)
-  console.log(tempData.widgetData)
 
   const [pos, setPos] = useState(position)
   const posSteps = [
@@ -47,6 +46,7 @@ export const AdminWidgetLogos = ({ widget, data, onChange }) => {
 
   const handleOnPosChange = newValue => {
     setPos(newValue)
+    onChange(id, { ...widget, position: newValue })
   }
 
   const handleOnLogoAdd = newTitle => {
@@ -85,7 +85,6 @@ export const AdminWidgetLogos = ({ widget, data, onChange }) => {
   }
 
   const handleOnLogoChange = newData => {
-    console.log(newData)
     const newWidgets = newData.style
       ? alterTileInWidgetDataStyle(tempData.widgetData, newData)
       : alterTileInWidgetData(tempData.widgetData, newData)
@@ -105,10 +104,10 @@ export const AdminWidgetLogos = ({ widget, data, onChange }) => {
 
   const handleOnWidgetStylesChange = newValue => {
     setWidgetStyles(newValue)
+    onChange(id, { ...widget, style: newValue })
   }
 
   const updateStates = (activeLogo, newTempData) => {
-    console.log('updateState', { activeLogo, newTempData })
     setTempData(newTempData)
     setLogoStyles(translateTileStyleIntoStyle(activeLogo.style ?? {}, activeLogo.path))
     setItems(mapLogosToListbox(newTempData.widgetData))
@@ -186,7 +185,7 @@ export const AdminWidgetLogos = ({ widget, data, onChange }) => {
         disabled={disabled}
         actions={{
           onSelected: handleOnLogoSelected,
-          onRemove: handleOnRemove,
+          onRemove: items.length > 1 ? handleOnRemove : null,
           onAdd: handleOnLogoAdd,
           onAddText: 'Add another logo below',
           onMoveUp: id => handleOnShiftPosition(id, -1),

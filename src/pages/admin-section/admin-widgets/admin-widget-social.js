@@ -10,6 +10,8 @@ import {
   getSectionWidgetById,
   mapLogosToListbox,
   mapSocialToListbox,
+  translateStyleIntoTileIconStyle,
+  translateTileIconStyleIntoStyle,
   translateTileStyleIntoStyle,
   translateWidgetTitle,
 } from '../../utils'
@@ -33,22 +35,28 @@ export const AdminWidgetSocial = ({ widget, data, onChange }) => {
     { title: 'Right', value: 'right' },
   ]
 
+  const [iconStyle, setIconStyle] = useState(
+    translateTileIconStyleIntoStyle(activeLogo ? activeLogo.style ?? {} : activeLogoDefault?.style ?? {}),
+  )
+
   useEffect(() => {
     setPos(position)
     setWidgetStyles(widget.style)
     setItems(mapSocialToListbox(tempData.widgetData))
+    setIconStyle(translateTileIconStyleIntoStyle(activeLogo ? activeLogo.style ?? {} : activeLogoDefault?.style ?? {}))
   }, [widget])
 
   const handleOnPosChange = newValue => {
     setPos(newValue)
+    onChange(id, { ...widget, position: newValue })
   }
 
   const handleOnWidgetStylesChange = newValue => {
     setWidgetStyles(newValue)
+    onChange(id, { ...widget, style: newValue })
   }
 
   const handleOnChange = newTempData => {
-    console.log('handleOnChange', newTempData, id)
     onChange(id, newTempData)
   }
 
@@ -103,6 +111,13 @@ export const AdminWidgetSocial = ({ widget, data, onChange }) => {
     updateStates(activeLogo, newTempData)
   }
 
+  const handleOnIconStyleChange = newStyle => {
+    const newNetworks = alterNetworkInWidgetData(tempData.widgetData, { ...activeLogo, style: newStyle })
+    const newTempData = { ...tempData, widgetData: newNetworks }
+    setIconStyle(newStyle)
+    updateStates(activeLogo, newTempData)
+  }
+
   const handleOnIconChange = newIcon => {
     const newNetworks = alterNetworkInWidgetData(tempData.widgetData, { icon: newIcon, id: activeLogo.id })
     const newTempData = { ...tempData, widgetData: newNetworks }
@@ -137,6 +152,17 @@ export const AdminWidgetSocial = ({ widget, data, onChange }) => {
           onChange={handleOnIconChange}
           onlyBrands
           color={activeLogo.style?.color}
+        />
+        <Styler
+          className="admin-active-section-styler-full-tiles-icon"
+          label="Custom styles for Icon"
+          title="Icon styler"
+          styles={iconStyle}
+          onSave={newStyles => {
+            handleOnIconStyleChange(translateStyleIntoTileIconStyle(newStyles))
+          }}
+          hasColor
+          hasIconSize
         />
 
         <ColorPicker
@@ -181,7 +207,7 @@ export const AdminWidgetSocial = ({ widget, data, onChange }) => {
         selectedItem={activeLogo?.id}
         actions={{
           onSelected: handleOnLogoSelected,
-          onRemove: handleOnRemove,
+          onRemove: items.length > 1 ? handleOnRemove : null,
           onAdd: handleOnLogoAdd,
           onAddText: 'Add another network below',
           onMoveUp: id => handleOnShiftPosition(id, -1),

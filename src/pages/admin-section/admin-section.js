@@ -1,10 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
-import { Button, Input, Listbox, Styler, Switch } from '../../components'
+import { Button, Input, Listbox, Styler, Switch, WidgetModal } from '../../components'
 import {
+  alterSectionsByPosition,
+  alterSectionsByRemoval,
+  alterTempDataByGroupCreation,
   alterTempDataBySectionAttribute,
+  alterWidgetsByEnable,
+  createNewContent,
+  createNewWidgetsPromise,
+  getEnabledWidgetsToMerge,
   getSectionWidgetById,
+  makePostRequest,
   mapSectionContentToListbox,
+  rearrangeWidgetsAfterGroupRelease,
+  reorderTempDataByItems,
   translateTempDataIntoStructure,
   updateTempWidgetById,
 } from '../utils'
@@ -18,8 +28,10 @@ import { AdminWidgetLogos } from './admin-widgets/admin-widget-logos'
 import { AdminWidgetForm } from './admin-widgets/admin-widget-form'
 import { AdminWidgetAddress } from './admin-widgets/admin-widget-address'
 import { AdminWidgetSocial } from './admin-widgets/admin-widget-social'
+import { AdminWidgetImage } from './admin-widgets/admin-widget-image'
+import { Translations } from '../../components'
 
-export const AdminSection = ({ data, section, onChange, isSaving }) => {
+export const AdminSection = ({ data, section, onChange, isSaving, forceRefresh }) => {
   const { value: sectionNameDefault, id, position: positionDefault } = section[0]
   const [tempData, setTempData] = useState(section)
   const defaultItems = mapSectionContentToListbox(section)
@@ -30,6 +42,8 @@ export const AdminSection = ({ data, section, onChange, isSaving }) => {
   const [loading, setLoading] = useState(false)
   const [groupAWID, setGroupAWID] = useState(null)
   const [sectionStyles, setSectionStyles] = useState(section[0].style)
+  const [canBeMerged, setCanBeMerged] = useState(false)
+  const [widgetsToRemove, setWidgetsToRemove] = useState([])
 
   useEffect(() => {
     const defaultItems = mapSectionContentToListbox(section)
@@ -46,15 +60,84 @@ export const AdminSection = ({ data, section, onChange, isSaving }) => {
     setTempData(alterTempDataBySectionAttribute(tempData, { value: newName }))
   }
 
-  const handleOnSave = () => {
+  const handleOnMergeClick = () => {
+    const mergeableItems = getEnabledWidgetsToMerge(items)
+    const newTempData = alterTempDataByGroupCreation(
+      tempData,
+      mergeableItems.map(item => item.id),
+    )
+    setTempData(newTempData)
+    setItems(mapSectionContentToListbox(newTempData))
+    handleOnSave(null, newTempData)
+
+    setCanBeMerged(false)
+    setTimeout(() => {
+      forceRefresh()
+    }, 200)
+  }
+
+  const handleOnWidgetMove = (value, up = true) => {
+    const newItems = alterSectionsByPosition(items, up ? -1 : 1, value)
+    setItems(newItems)
+    handleWidgetListChanged(newItems)
+  }
+
+  const handleOnWidgetRemove = (value, id) => {
+    const newItems = alterSectionsByRemoval(items, value)
+    setWidgetsToRemove([...widgetsToRemove, id])
+    setItems(newItems)
+    handleWidgetListChanged(newItems)
+  }
+
+  const handleOnWidgetEnable = (id, value) => {
+    const newItems = alterWidgetsByEnable(items, id, value)
+    const mergeable = getEnabledWidgetsToMerge(newItems)?.length > 1
+    if (canBeMerged !== mergeable) {
+      setCanBeMerged(mergeable)
+    }
+    setItems(newItems)
+    handleWidgetListChanged(newItems)
+  }
+
+  const handleWidgetListChanged = newItems => {
+    setTempData(reorderTempDataByItems(tempData, newItems))
+  }
+
+  const onNewWidgetSelect = newWidgetType => {
+    const newContent = createNewContent(newWidgetType, section[0].section_id, section.length)
+    makePostRequest('saveNewContent', newContent).then(({ data }) => {
+      const newContentId = data['content_id']
+      newContent.id = newContentId
+      newContent.new = false
+      Promise.all(createNewWidgetsPromise(newWidgetType, newContentId)).then(promises => {
+        newContent.widgetData = []
+        promises.forEach(promiseResult => {
+          newContent.widgetData.push({ id: promiseResult.data.widget_id })
+        })
+        forceRefresh()
+        handleOnWidgetChange(newContent.id, newContent)
+      })
+    })
+  }
+
+  const handleOnSave = (e, saveData) => {
     setLoading(true)
-    const structure = translateTempDataIntoStructure(tempData)
-    console.log('structure', structure)
-    onChange(structure)
+
+    const saveProcess = () => {
+      const structure = translateTempDataIntoStructure(saveData ?? tempData)
+      onChange(structure)
+    }
+
+    if (widgetsToRemove?.length) {
+      makePostRequest('removeWidget', { ids: widgetsToRemove }).then(() => {
+        saveProcess()
+      })
+    } else {
+      saveProcess()
+    }
   }
 
   const handleOnWidgetRowClick = widgetId => {
-    console.log(widgetId, tempData)
     setActiveWidget(getSectionWidgetById(tempData, widgetId)?.[0])
   }
 
@@ -68,27 +151,35 @@ export const AdminSection = ({ data, section, onChange, isSaving }) => {
     setTempData(alterTempDataBySectionAttribute(tempData, { style: newValue }))
   }
 
-  const handleOnWidgetAdd = type => {}
+  const handleOnGroupWidgetRelease = ids => {
+    const newTempData = rearrangeWidgetsAfterGroupRelease(tempData, ids)
+    setTempData(newTempData)
+    handleOnSave(null, newTempData)
+  }
 
   const handleOnWidgetChange = (widgetId, widgetData, groupAWID) => {
     const newSectionData = updateTempWidgetById(tempData, widgetId, widgetData)
-    const newActiveWidget = getSectionWidgetById(newSectionData, activeWidget.id)?.[0]
-    console.log('changing', widgetId, widgetData, newActiveWidget)
+    const newActiveWidget = getSectionWidgetById(newSectionData, activeWidget?.id)?.[0]
     setTempData(newSectionData)
     setItems(mapSectionContentToListbox(newSectionData))
     setActiveWidget(newActiveWidget)
     setGroupAWID(groupAWID)
   }
   const renderSelectedWidget = () => {
-    console.log('active', activeWidget)
-    if (!activeWidget.type) {
+    if (!activeWidget?.type) {
       return null
     }
 
     switch (activeWidget?.type) {
       case 'article':
         return (
-          <AdminWidgetArticle widget={activeWidget} onSave={handleOnSave} data={data} onChange={handleOnWidgetChange} />
+          <AdminWidgetArticle
+            widget={activeWidget}
+            onSave={handleOnSave}
+            data={data}
+            onChange={handleOnWidgetChange}
+            forceRefresh={forceRefresh}
+          />
         )
       case 'animation':
         return (
@@ -97,6 +188,7 @@ export const AdminSection = ({ data, section, onChange, isSaving }) => {
             onSave={handleOnSave}
             data={data}
             onChange={handleOnWidgetChange}
+            forceRefresh={forceRefresh}
           />
         )
       case 'group':
@@ -107,6 +199,8 @@ export const AdminSection = ({ data, section, onChange, isSaving }) => {
             data={data}
             onChange={handleOnWidgetChange}
             activeWidgetId={groupAWID}
+            onWidgetsRelease={handleOnGroupWidgetRelease}
+            forceRefresh={forceRefresh}
           />
         )
       case 'full_tiles':
@@ -116,6 +210,7 @@ export const AdminSection = ({ data, section, onChange, isSaving }) => {
             data={data}
             onSave={handleOnSave}
             onChange={handleOnWidgetChange}
+            forceRefresh={forceRefresh}
           />
         )
       case 'numeric_tiles':
@@ -125,23 +220,58 @@ export const AdminSection = ({ data, section, onChange, isSaving }) => {
             data={data}
             onSave={handleOnSave}
             onChange={handleOnWidgetChange}
+            forceRefresh={forceRefresh}
           />
         )
       case 'logos':
         return (
-          <AdminWidgetLogos widget={activeWidget} data={data} onSave={handleOnSave} onChange={handleOnWidgetChange} />
+          <AdminWidgetLogos
+            widget={activeWidget}
+            data={data}
+            onSave={handleOnSave}
+            onChange={handleOnWidgetChange}
+            forceRefresh={forceRefresh}
+          />
         )
       case 'form':
         return (
-          <AdminWidgetForm widget={activeWidget} data={data} onSave={handleOnSave} onChange={handleOnWidgetChange} />
+          <AdminWidgetForm
+            widget={activeWidget}
+            data={data}
+            onSave={handleOnSave}
+            onChange={handleOnWidgetChange}
+            forceRefresh={forceRefresh}
+          />
         )
       case 'address':
         return (
-          <AdminWidgetAddress widget={activeWidget} data={data} onSave={handleOnSave} onChange={handleOnWidgetChange} />
+          <AdminWidgetAddress
+            widget={activeWidget}
+            data={data}
+            onSave={handleOnSave}
+            onChange={handleOnWidgetChange}
+            forceRefresh={forceRefresh}
+          />
         )
       case 'social':
         return (
-          <AdminWidgetSocial widget={activeWidget} data={data} onSave={handleOnSave} onChange={handleOnWidgetChange} />
+          <AdminWidgetSocial
+            widget={activeWidget}
+            data={data}
+            onSave={handleOnSave}
+            onChange={handleOnWidgetChange}
+            forceRefresh={forceRefresh}
+          />
+        )
+      case 'image':
+        return (
+          <AdminWidgetImage
+            widget={activeWidget}
+            data={data}
+            onSave={handleOnSave}
+            onChange={handleOnWidgetChange}
+            forceRefresh={forceRefresh}
+          />
         )
       default:
         return null
@@ -156,6 +286,12 @@ export const AdminSection = ({ data, section, onChange, isSaving }) => {
           value={sectionName}
           label="Section name:"
           id={`section-name-input-${id}`}
+        />
+        <Translations
+          item={{ id, type: 'section', itemValue: sectionName }}
+          translations={data.translations}
+          languages={data.languages}
+          forceRefresh={forceRefresh}
         />
 
         <Switch onChange={val => handleOnPositionChange(val)} checked={position} label="Full height:" />
@@ -179,11 +315,20 @@ export const AdminSection = ({ data, section, onChange, isSaving }) => {
           label="Widget overview:"
           actions={{
             onSelected: handleOnWidgetRowClick,
-            // onAdd: handleOnWidgetAdd,
-            onAddText: 'Add another widget below',
+            onMoveUp: handleOnWidgetMove,
+            onMoveDown: value => handleOnWidgetMove(value, false),
+            onRemove: handleOnWidgetRemove,
+            onEnable: handleOnWidgetEnable,
           }}
           selectedItem={activeWidget?.id}
         />
+
+        <div className="admin-section-widget-list-controls">
+          <WidgetModal onSelect={onNewWidgetSelect} />
+          <Button disabled={!canBeMerged} onClick={handleOnMergeClick} hint="Create widget group from selected widgets">
+            Create group
+          </Button>
+        </div>
 
         <div className="admin-section-active-widget">{renderSelectedWidget()}</div>
 
@@ -199,7 +344,8 @@ export const AdminSection = ({ data, section, onChange, isSaving }) => {
 
 AdminSection.propTypes = {
   data: PropTypes.object.isRequired,
-  section: PropTypes.object.isRequired,
+  section: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
   onChange: PropTypes.func.isRequired,
   isSaving: PropTypes.bool.isRequired,
+  forceRefresh: PropTypes.func.isRequired,
 }

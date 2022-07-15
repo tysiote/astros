@@ -1,4 +1,5 @@
 $black: #212121;
+$black2: #444444;
 $white: #FAFAFA;
 $white2: #B0BEC5;
 $white3: #9E9E9E;
@@ -10,6 +11,9 @@ $red3: #FF8A80;
 $red4: #FFEBEE;
 $red5: #FFCDD2;
 $gray1: #E0E0E0;
+$orange1: #FFA000;
+$orange2: #FF8F00;
+$orange3: #FFC107;
 
 body {
   margin: 0;
@@ -26,5 +30,34 @@ body {
     align-items: center;
     justify-content: center;
     display: flex;
+  }
+
+  .admin-login {
+    min-height: 100vh;
+    background-color: $white3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .admin-login-form {
+      width: 300px;
+      background-color: $white;
+      border: 1px solid $red;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px $red;
+
+      button {
+        width: 100%;
+        background-color: $red;
+        border: $red;
+        color: $white;
+
+        &:hover {
+          background-color: $red2;
+          border-color: $red2;
+        }
+      }
+    }
   }
 }

@@ -17,7 +17,6 @@ export const AdminContent = ({ data, onChange }) => {
 
   const handleOnSave = () => {
     setLoading(true)
-    console.log(translateNewSectionsToBackend(newSections))
     makePostRequest('saveSectionList', { sections: translateNewSectionsToBackend(newSections) }).then(result => {
       setLoading(false)
       onChange()
@@ -52,7 +51,7 @@ export const AdminContent = ({ data, onChange }) => {
           items={newSections}
           label="Current sections:"
           actions={{
-            onRemove: handleOnRemove,
+            onRemove: newSections.length > 1 ? handleOnRemove : null,
             onAdd: handleOnAdd,
             onAddText: 'Add section',
             onMoveUp: id => handleOnShiftPosition(id, -1),

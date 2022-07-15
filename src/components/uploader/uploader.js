@@ -11,7 +11,6 @@ export const Uploader = ({ id, path, onUploadStart, onUploadFinish, className, l
 
   const handleOnFileSelected = e => {
     setFile(e?.target?.files?.[0])
-    console.log(e.target.files[0])
   }
 
   const handleOnUploadStart = () => {

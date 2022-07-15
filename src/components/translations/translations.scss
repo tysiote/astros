@@ -1,0 +1,18 @@
+.translations {
+  .translations-button-controls {
+    display: flex;
+    justify-content: flex-end;
+    .open-translations {
+      width: 250px;
+    }
+  }
+
+  .translations-modal-controls {
+    display: flex;
+    justify-content: flex-end;
+
+    .primary {
+      margin-left: 10px;
+    }
+  }
+}

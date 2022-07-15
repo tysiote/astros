@@ -1,12 +1,19 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import './numeric-tiles.scss'
+import { getTranslationById } from '../../pages/utils'
 
 export class NumericTiles extends Component {
   renderOneTile = tile => {
+    const {
+      lang,
+      otherData: { translations },
+    } = this.props
     const { id, title, description, style } = tile
     const { titleColor, descriptionColor, footerColor, titleSize, descriptionSize, minHeight, height, ...restStyle } =
       style ?? {}
+
+    const trans = getTranslationById({ translations, lang, widgetId: id })
 
     return (
       <div
@@ -16,10 +23,10 @@ export class NumericTiles extends Component {
       >
         <div className="numeric-tile-content">
           <div className="numeric-tile-title" style={{ color: titleColor, fontSize: titleSize }}>
-            {title}
+            {trans?.title ?? title}
           </div>
           <div className="numeric-tile-description" style={{ color: descriptionColor, fontSize: descriptionSize }}>
-            {description}
+            {trans?.description ?? description}
           </div>
         </div>
         <div className="numeric-tile-footer" style={{ borderColor: footerColor }} />
@@ -40,4 +47,9 @@ export class NumericTiles extends Component {
 NumericTiles.propTypes = {
   widgetData: PropTypes.array.isRequired,
   id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+  lang: PropTypes.string.isRequired,
+  otherData: PropTypes.shape({
+    core: PropTypes.array,
+    translations: PropTypes.array,
+  }).isRequired,
 }

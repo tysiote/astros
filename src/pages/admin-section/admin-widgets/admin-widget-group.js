@@ -7,7 +7,7 @@ import {
   translateWidgetTitle,
   updateTempWidgetById,
 } from '../../utils'
-import { Listbox, Styler } from '../../../components'
+import { Button, Listbox, Styler } from '../../../components'
 import { AdminWidgetArticle } from './admin-widget-article'
 import { AdminWidgetAnimation } from './admin-widget-animation'
 import { AdminWidgetFullTiles } from './admin-widget-full-tiles'
@@ -17,7 +17,7 @@ import { AdminWidgetForm } from './admin-widget-form'
 import { AdminWidgetAddress } from './admin-widget-address'
 import { AdminWidgetSocial } from './admin-widget-social'
 
-export const AdminWidgetGroup = ({ widget, data, onChange, activeWidgetId }) => {
+export const AdminWidgetGroup = ({ widget, data, onChange, activeWidgetId, onWidgetsRelease, forceRefresh }) => {
   const { type, id, items: groupItems } = widget
   const [tempData, setTempData] = useState(widget)
   const listboxItems = mapGroupWidgetsToListbox(groupItems)
@@ -26,6 +26,7 @@ export const AdminWidgetGroup = ({ widget, data, onChange, activeWidgetId }) => 
   )
   const [items, setItems] = useState(listboxItems)
   const [groupStyles, setGroupStyles] = useState(groupItems[0].style)
+  const [widgetsToBeRelease, setWidgetsToBeReleased] = useState([])
 
   useEffect(() => {
     const listboxItems = mapGroupWidgetsToListbox(tempData.items)
@@ -36,6 +37,21 @@ export const AdminWidgetGroup = ({ widget, data, onChange, activeWidgetId }) => 
 
   const handleOnWidgetSelected = widgetId => {
     setActiveWidget(getSectionWidgetById(items, widgetId)?.[0])
+  }
+
+  const handleOnWidgetsReleased = () => {
+    const enabledWidgets = items.filter(item => item.enabled).map(item => item.id)
+    onWidgetsRelease(enabledWidgets)
+  }
+
+  const handleOnWidgetsEnabled = (id, value) => {
+    const enabledWidgets = items.filter(item => item.enabled).map(item => item.id)
+    if (value) {
+      enabledWidgets.push(id)
+    } else {
+      enabledWidgets.splice(enabledWidgets.indexOf(id))
+    }
+    setItems(items.map(item => ({ ...item, enabled: enabledWidgets.indexOf(item.id) !== -1 })))
   }
 
   const handleOnWidgetStylesChange = newValue => {
@@ -63,7 +79,13 @@ export const AdminWidgetGroup = ({ widget, data, onChange, activeWidgetId }) => 
     switch (activeWidget?.type) {
       case 'article':
         return (
-          <AdminWidgetArticle widget={activeWidget} onSave={handleOnSave} data={data} onChange={handleOnWidgetChange} />
+          <AdminWidgetArticle
+            widget={activeWidget}
+            onSave={handleOnSave}
+            data={data}
+            onChange={handleOnWidgetChange}
+            forceRefresh={forceRefresh}
+          />
         )
       case 'animation':
         return (
@@ -72,11 +94,18 @@ export const AdminWidgetGroup = ({ widget, data, onChange, activeWidgetId }) => 
             onSave={handleOnSave}
             data={data}
             onChange={handleOnWidgetChange}
+            forceRefresh={forceRefresh}
           />
         )
       case 'group':
         return (
-          <AdminWidgetGroup widget={activeWidget} onSave={handleOnSave} data={data} onChange={handleOnWidgetChange} />
+          <AdminWidgetGroup
+            widget={activeWidget}
+            onSave={handleOnSave}
+            data={data}
+            onChange={handleOnWidgetChange}
+            forceRefresh={forceRefresh}
+          />
         )
       case 'full_tiles':
         return (
@@ -85,6 +114,7 @@ export const AdminWidgetGroup = ({ widget, data, onChange, activeWidgetId }) => 
             data={data}
             onSave={handleOnSave}
             onChange={handleOnWidgetChange}
+            forceRefresh={forceRefresh}
           />
         )
       case 'numeric_tiles':
@@ -94,23 +124,48 @@ export const AdminWidgetGroup = ({ widget, data, onChange, activeWidgetId }) => 
             data={data}
             onSave={handleOnSave}
             onChange={handleOnWidgetChange}
+            forceRefresh={forceRefresh}
           />
         )
       case 'logos':
         return (
-          <AdminWidgetLogos widget={activeWidget} data={data} onSave={handleOnSave} onChange={handleOnWidgetChange} />
+          <AdminWidgetLogos
+            widget={activeWidget}
+            data={data}
+            onSave={handleOnSave}
+            onChange={handleOnWidgetChange}
+            forceRefresh={forceRefresh}
+          />
         )
       case 'form':
         return (
-          <AdminWidgetForm widget={activeWidget} data={data} onSave={handleOnSave} onChange={handleOnWidgetChange} />
+          <AdminWidgetForm
+            widget={activeWidget}
+            data={data}
+            onSave={handleOnSave}
+            onChange={handleOnWidgetChange}
+            forceRefresh={forceRefresh}
+          />
         )
       case 'address':
         return (
-          <AdminWidgetAddress widget={activeWidget} data={data} onSave={handleOnSave} onChange={handleOnWidgetChange} />
+          <AdminWidgetAddress
+            widget={activeWidget}
+            data={data}
+            onSave={handleOnSave}
+            onChange={handleOnWidgetChange}
+            forceRefresh={forceRefresh}
+          />
         )
       case 'social':
         return (
-          <AdminWidgetSocial widget={activeWidget} data={data} onSave={handleOnSave} onChange={handleOnWidgetChange} />
+          <AdminWidgetSocial
+            widget={activeWidget}
+            data={data}
+            onSave={handleOnSave}
+            onChange={handleOnWidgetChange}
+            forceRefresh={forceRefresh}
+          />
         )
       default:
         return null
@@ -130,8 +185,18 @@ export const AdminWidgetGroup = ({ widget, data, onChange, activeWidgetId }) => 
           onSelected: handleOnWidgetSelected,
           // onAdd: handleOnWidgetAdd,
           onAddText: 'Add another widget below',
+          onEnable: handleOnWidgetsEnabled,
         }}
       />
+
+      <div className="widget-group-controls">
+        <Button
+          onClick={handleOnWidgetsReleased}
+          disabled={!items.filter(item => item.enabled).map(item => item.id)?.length}
+        >
+          Move widgets from group
+        </Button>
+      </div>
 
       {/*<Styler*/}
       {/*  className="admin-group-styler"*/}
@@ -157,6 +222,8 @@ AdminWidgetGroup.propTypes = {
   data: PropTypes.object.isRequired,
   onChange: PropTypes.func.isRequired,
   activeWidgetId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  onWidgetsRelease: PropTypes.func.isRequired,
+  forceRefresh: PropTypes.func.isRequired,
 }
 
 AdminWidgetGroup.defaultProps = {

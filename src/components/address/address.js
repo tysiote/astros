@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { getBackendURL, getResource } from '../../pages/utils'
+import { getBackendURL, getResource, getTranslationById } from '../../pages/utils'
 import './address.scss'
 
 export class Address extends Component {
@@ -8,7 +8,8 @@ export class Address extends Component {
     const {
       id,
       widgetData,
-      otherData: { core },
+      otherData: { core, translations },
+      lang,
     } = this.props
     const assetsPath = getResource('assets_path', core)
     const logoPath = getResource('logo_path', core)
@@ -16,11 +17,12 @@ export class Address extends Component {
     const themeColor = getResource('theme_color', core)
     const { description, style } = widgetData[0]
     const { hasLogo, descriptionColor, descriptionSize, titleColor, titleSize, logoSize, ...restStyle } = style ?? {}
+    const trans = getTranslationById({ translations, lang, widgetId: id })
 
     return (
       <div className="address" key={`widget-address-${id}`} style={restStyle}>
         <div className="address-title">
-          {(hasLogo || hasLogo === undefined) && (
+          {hasLogo && (
             <div
               className="address-logo"
               style={{
@@ -35,7 +37,7 @@ export class Address extends Component {
           </div>
         </div>
         <div className="address-description" style={{ fontSize: descriptionSize, color: descriptionColor }}>
-          {description}
+          {trans?.description ?? description}
         </div>
       </div>
     )
@@ -47,5 +49,7 @@ Address.propTypes = {
   id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
   otherData: PropTypes.shape({
     core: PropTypes.array,
+    translations: PropTypes.array,
   }).isRequired,
+  lang: PropTypes.string.isRequired,
 }

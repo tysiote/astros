@@ -34,3 +34,14 @@
     }
   }
 }
+
+.admin-section-widget-list-controls {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.widget-group-controls {
+  justify-content: flex-end;
+  display: flex;
+}

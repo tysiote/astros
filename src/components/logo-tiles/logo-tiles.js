@@ -30,7 +30,7 @@ export class LogoTiles extends Component {
 
     return (
       <div className="logo-tiles" key={`widget-logo-tiles-${id}`}>
-        {widgetData.map(widget => this.renderOneTile(widget))}
+        {widgetData?.map(widget => this.renderOneTile(widget))}
       </div>
     )
   }
@@ -42,4 +42,5 @@ LogoTiles.propTypes = {
   otherData: PropTypes.shape({
     core: PropTypes.array,
   }).isRequired,
+  lang: PropTypes.string.isRequired,
 }

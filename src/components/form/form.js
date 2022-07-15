@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import './form.scss'
 import PropTypes from 'prop-types'
+import classNames from 'classnames'
 import { Button } from '../button'
+import { getTranslationById, makePostRequest } from '../../pages/utils'
 
 export class Form extends Component {
   constructor(props) {
@@ -12,11 +14,30 @@ export class Form extends Component {
     this.state = {
       values,
       buttonHovered: false,
+      disabled: false,
+      buttonWidth: null,
+      buttonProgressText: null,
     }
   }
 
   handleOnButtonClick = () => {
-    alert()
+    const { values } = this.state
+    const { widgetData } = this.props
+    let sender = null
+    let content = null
+
+    widgetData.forEach(wD => {
+      if (wD.style?.isTextarea) {
+        content = values[wD.id]
+      } else {
+        sender = values[wD.id]
+      }
+    })
+
+    this.setState({ disabled: true, buttonProgressText: 'Sending email ...' })
+    makePostRequest('sendEmail', { content, sender }).then(() => {
+      this.setState({ buttonProgressText: 'Email sent successfully', buttonWidth: 300 })
+    })
   }
 
   handleOnTextChange = (event, id) => {
@@ -33,9 +54,13 @@ export class Form extends Component {
   }
 
   renderButton = styles => {
-    const { buttonHovered } = this.state
-    const { buttonSize, buttonColor, buttonText, buttonHoverColor, buttonBackgroundColor, buttonHoverBackgroundColor } =
-      styles
+    const { disabled, buttonProgressText, buttonWidth } = this.state
+    const { buttonSize, buttonColor, buttonText, buttonBgColor } = styles
+    const finalStyles = {}
+    finalStyles.width = buttonWidth ? `${buttonWidth}px` : undefined
+    finalStyles.backgroundColor = buttonBgColor ? buttonBgColor : undefined
+    finalStyles.borderColor = buttonBgColor ? buttonBgColor : undefined
+    finalStyles.color = buttonColor ? buttonColor : undefined
 
     return (
       <div className="form-item">
@@ -43,10 +68,12 @@ export class Form extends Component {
           <Button
             onClick={this.handleOnButtonClick}
             className="primary"
+            disabled={disabled}
+            style={finalStyles}
             // onMouseEnter={this.handleOnButtonMouseToggle}
             // onMouseLeave={this.handleOnButtonMouseToggle}
           >
-            {buttonText}
+            {buttonProgressText ?? buttonText}
           </Button>
         </div>
       </div>
@@ -54,22 +81,29 @@ export class Form extends Component {
   }
 
   renderOneItem = item => {
-    const { values } = this.state
+    const { values, disabled } = this.state
+    const {
+      lang,
+      otherData: { translations },
+    } = this.props
     const { id, title, description, style } = item
     const { isTextarea, labelColor, labelSize, rowsCount, ...restStyle } = style ?? {}
     const elementId = `form-item-${id}`
+    const trans = getTranslationById({ translations, lang, widgetId: id })
     const elementProps = {
       value: values[id],
       onChange: e => this.handleOnTextChange(e, id),
-      placeholder: description,
+      placeholder: trans?.description ?? description,
       id: elementId,
+      disabled: disabled,
+      className: classNames({ disabled }),
     }
 
     return (
       <div className="form-item" key={elementId} style={restStyle}>
         <div className="form-group">
           <label htmlFor={elementId} style={{ fontSize: labelSize, color: labelColor }}>
-            {title}
+            {trans?.title ?? title}
           </label>
           {isTextarea ? <textarea {...elementProps} rows={rowsCount ?? 10} /> : <input {...elementProps} />}
         </div>
@@ -79,15 +113,7 @@ export class Form extends Component {
 
   render() {
     const { id, widgetData, style } = this.props
-    const {
-      buttonText,
-      buttonSize,
-      buttonColor,
-      buttonHoverColor,
-      buttonBackgroundColor,
-      buttonHoverBackgroundColor,
-      ...restStyle
-    } = style
+    const { buttonText, buttonSize, buttonColor, buttonBgColor, ...restStyle } = style
     return (
       <div className="form" key={`widget-form-${id}`} style={restStyle}>
         {widgetData.map(item => this.renderOneItem(item))}
@@ -95,9 +121,7 @@ export class Form extends Component {
           buttonText,
           buttonSize,
           buttonColor,
-          buttonHoverColor,
-          buttonBackgroundColor,
-          buttonHoverBackgroundColor,
+          buttonBgColor,
         })}
       </div>
     )
@@ -109,4 +133,9 @@ Form.propTypes = {
   id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
   value: PropTypes.string.isRequired,
   style: PropTypes.object,
+  lang: PropTypes.string.isRequired,
+  otherData: PropTypes.shape({
+    core: PropTypes.array,
+    translations: PropTypes.array,
+  }).isRequired,
 }

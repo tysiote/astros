@@ -57,7 +57,7 @@ export class Sidebar extends Component {
     onAdminLeave()
   }
 
-  renderOneItem = (item, isSubItem) => {
+  renderOneItem = (item, isSubItem, idx) => {
     const { activeItem } = this.props
     const { title, icon, subItems, id, expanded } = item
     const isActive = isItemActive(id, activeItem)
@@ -67,7 +67,7 @@ export class Sidebar extends Component {
       <div
         className={classNames('menu-item', { active: isActive, 'sub-item': isSubItem })}
         onClick={e => this.handleOnItemGroupClicked(id, e)}
-        key={`sidebar-${id}-key`}
+        key={`sidebar-${idx}-key`}
       >
         <div className="label">
           {icon && (
@@ -82,10 +82,12 @@ export class Sidebar extends Component {
     )
 
     return expanded ? (
-      <>
+      <div key={`sidebar-${idx}-key`}>
         {mainItem}
-        <div className="sub-items">{subItems.map(subItem => this.renderOneItem(subItem, true))}</div>
-      </>
+        <div className="sub-items">
+          {subItems.map(subItem => this.renderOneItem(subItem, true, `${idx}-${subItem.id}`))}
+        </div>
+      </div>
     ) : (
       mainItem
     )
@@ -123,7 +125,7 @@ export class Sidebar extends Component {
       <div className={classNames('sidebar', className, { minimized })} key="sidebar">
         <div className="sidebar-items">
           {this.renderMinimize()}
-          {!minimized && items.map(item => this.renderOneItem(item))}
+          {!minimized && items.map((item, idx) => this.renderOneItem(item, null, idx))}
         </div>
         {this.renderLeaveAdmin()}
       </div>
